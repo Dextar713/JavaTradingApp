@@ -33,6 +33,10 @@ public class AssetRepo implements IAssetRepo{
                 .orElse(null);
     }
 
+    public void updateAssetPrice(int assetId, double newPrice) {
+        db.updateAssetPrice(assetId, newPrice);
+    }
+
     @Override
     public void add(Asset asset) {
         db.getAssets().add(asset);

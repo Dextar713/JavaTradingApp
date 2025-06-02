@@ -9,4 +9,5 @@ public interface IAssetRepo {
     Asset getByName(String name);
     Asset getById(int id);
     void add(Asset asset);
+    void updateAssetPrice(int assetId, double newPrice);
 }

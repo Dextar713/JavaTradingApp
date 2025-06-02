@@ -5,6 +5,7 @@ import backend.observers.BalanceUpdater;
 import backend.observers.IOrderListener;
 import backend.observers.TransactionUpdater;
 import backend.repositories.IAssetRepo;
+import backend.repositories.IPortfolioRepo;
 import backend.repositories.ITransactionRepo;
 import backend.repositories.IUserRepo;
 import exceptions.CustomExceptions;
@@ -14,17 +15,20 @@ import java.util.Set;
 public class TradingService {
     private final IUserRepo userRepo;
     private final IAssetRepo assetRepo;
+    private final IPortfolioRepo portfolioRepo;
     //private final ITransactionRepo transactionRepo;
     private final MatchingOrderBook orderBook;
 
     public TradingService(IUserRepo userRepo,
                           IAssetRepo assetRepo,
                           ITransactionRepo transactionRepo,
+                          IPortfolioRepo portfolioRepo,
                           MatchingOrderBook orderBook) {
         this.userRepo = userRepo;
         this.assetRepo = assetRepo;
+        this.portfolioRepo = portfolioRepo;
         this.orderBook = orderBook;
-        this.orderBook.addListener(new BalanceUpdater(userRepo, assetRepo));
+        this.orderBook.addListener(new BalanceUpdater(userRepo, assetRepo, portfolioRepo));
         this.orderBook.addListener(new TransactionUpdater(transactionRepo));
     }
 
@@ -44,7 +48,7 @@ public class TradingService {
         //double assetPrice = asset.getPricePerUnit();
         double totalValue = amount * asset.getPricePerUnit();
         Portfolio portfolio = user.getPortfolio();
-        if (totalValue > portfolio.getBalance()) {
+        if (totalValue > portfolioRepo.getBalance(portfolio.getId())) {
             throw new CustomExceptions.NotEnoughBalance(
                     "You dont have enough balance to buy");
         }
@@ -60,13 +64,13 @@ public class TradingService {
             throw new CustomExceptions.UserNotExists("User not found");
         }
         Portfolio portfolio = user.getPortfolio();
-        if(!portfolio.hasAsset(assetId)) {
+        if(!portfolioRepo.hasAsset(portfolio.getId(), assetId)) {
             throw new CustomExceptions.AssetNotExists("Asset not found in portfolio");
         }
-        PortfolioAsset asset = portfolio.getAsset(assetId);
-        if (amount > asset.getQuantity()) {
+        //PortfolioAsset asset = portfolio.getAsset(assetId);
+        if (amount > portfolioRepo.getAssetQuantity(portfolio.getId(), assetId)) {
             throw new CustomExceptions.NotEnoughAssetQuantity(
-                    "You dont have enough quantity of " + asset.getName());
+                    "You dont have enough quantity of " + assetRepo.getById(assetId).getName());
         }
         Order order = new Order(price, amount, false, assetId, userId);
         orderBook.HandleOrder(order);

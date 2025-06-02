@@ -9,6 +9,13 @@ public class Portfolio {
     private double balance;
     private final Map<Integer, PortfolioAsset> assets;
 
+    public Portfolio(int id, int userId, double balance) {
+        this.id = id;
+        this.userId = userId;
+        this.balance = balance;
+        this.assets = new HashMap<>();
+    }
+
     public Portfolio(int userId, double balance) {
         this.id = counter++;
         this.userId = userId;
@@ -38,6 +45,7 @@ public class Portfolio {
 
     public List<PortfolioAsset> getAssets() {
         Collection<PortfolioAsset> assetValues = assets.values();
+        //return (List<PortfolioAsset>) assetValues;
         return new ArrayList<>(assetValues);
     }
 
@@ -49,12 +57,20 @@ public class Portfolio {
         return assets.get(assetId);
     }
 
-    public void addAsset(PortfolioAsset asset) {
-        assets.put(asset.getId(), asset);
+    public void addAsset(Asset asset, double quantity) {
+        if(assets.containsKey(asset.getId())) {
+            PortfolioAsset target = assets.get(asset.getId());
+            target.setQuantity(target.getQuantity() + quantity);
+        } else {
+            PortfolioAsset newPortfolioAsset = new PortfolioAsset(asset, quantity, this.id);
+            assets.put(asset.getId(), newPortfolioAsset);
+        }
     }
 
-    public void updateAsset(int assetId, double quantity) {
-        PortfolioAsset target = assets.get(assetId);
-        target.setQuantity(quantity);
+    public void removeAsset(int assetId, double quantity) {
+        if(assets.containsKey(assetId)) {
+            PortfolioAsset target = assets.get(assetId);
+            target.setQuantity(target.getQuantity() - quantity);
+        }
     }
 }

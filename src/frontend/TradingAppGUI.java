@@ -2,9 +2,11 @@ package frontend;
 
 import backend.database.IDatabase;
 import backend.models.Asset;
+import backend.models.Portfolio;
 import backend.models.PortfolioAsset;
 import backend.models.User;
 import backend.repositories.IAssetRepo;
+import backend.repositories.IPortfolioRepo;
 import backend.repositories.IUserRepo;
 import backend.services.LoginService;
 import backend.services.TradingService;
@@ -22,14 +24,16 @@ public class TradingAppGUI extends JFrame {
     private final IDatabase db;
     private final LoginService loginService;
     private final TradingService tradingService;
-
+    private final IPortfolioRepo portfolioRepo;
     private final JTabbedPane tabbedPane;
 
     public TradingAppGUI(IUserRepo userRepo, IAssetRepo assetRepo,
+                         IPortfolioRepo portfolioRepo,
                          IDatabase db, LoginService loginService,
                          TradingService tradingService) {
         this.userRepo = userRepo;
         this.assetRepo = assetRepo;
+        this.portfolioRepo = portfolioRepo;
         this.db = db;
         this.loginService = loginService;
         this.tradingService = tradingService;
@@ -191,17 +195,18 @@ public class TradingAppGUI extends JFrame {
             JOptionPane.showMessageDialog(this, "You should login");
             return panel;
         }
-        List<PortfolioAsset> userAssets = curUser.getPortfolio().getAssets();
-        double depositLeft = curUser.getPortfolio().getBalance();
+        Portfolio curPortfolio = curUser.getPortfolio();
+        List<PortfolioAsset> userAssets = portfolioRepo.getAssets(curPortfolio.getId());
+        double depositLeft = portfolioRepo.getBalance(curPortfolio.getId());
         double totalAssetValue = 0;
         int portfolioSize = userAssets.size();
         Object[][] data = new Object[portfolioSize][];
         for(int i=0; i<portfolioSize; i++) {
-            double value = userAssets.get(i).getQuantity() * userAssets.get(i).getPricePerUnit();
+            double value = userAssets.get(i).getQuantity() * userAssets.get(i).getAsset().getPricePerUnit();
             data[i] = new Object[]{
-                    userAssets.get(i).getName(),
+                    userAssets.get(i).getAsset().getName(),
                     userAssets.get(i).getQuantity(),
-                    userAssets.get(i).getPricePerUnit(),
+                    userAssets.get(i).getAsset().getPricePerUnit(),
                     value
             };
             totalAssetValue += value;

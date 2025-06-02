@@ -12,5 +12,7 @@ public interface IDatabase {
     List<Transaction> getTransactions();
     User getCurrentUser();
     void setCurrentUser(User user);
+    void updateAssetPrice(int assetId, double newPrice);
     void SeedData();
+    void addTransaction(Transaction transaction);
 }

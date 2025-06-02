@@ -37,6 +37,12 @@ public abstract class Asset implements Comparable<Asset>{
         return name;
     }
 
+    public Asset(int id, double price, String name) {
+        this.id = id;
+        this.pricePerUnit = price;
+        this.name = name;
+    }
+
     public Asset(double price, String name) {
         this.id = counter++;
         this.pricePerUnit = price;

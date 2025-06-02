@@ -37,21 +37,31 @@ public class InMemoryDB implements IDatabase{
         return transactions;
     }
 
+    @Override
+    public void updateAssetPrice(int assetId, double newPrice) {
+        for(Asset asset: assets) {
+            if(asset.getId() == assetId) {
+                asset.setPricePerUnit(newPrice);
+                break;
+            }
+        }
+    }
+
     public void SeedData() {
         if (!this.users.isEmpty() || !this.assets.isEmpty() || !this.transactions.isEmpty()) {
             return; // Already seeded
         }
 
         // Create Assets
-        CryptoCoin bitcoin = new CryptoCoin(30000, "Bitcoin",
+        CryptoCoin bitcoin = new CryptoCoin(30000, "BTC",
                 "Satoshi Nakamoto", "Japan");
-        CryptoCoin ethereum = new CryptoCoin(1800, "Ethereum",
+        CryptoCoin ethereum = new CryptoCoin(1800, "ETH",
                 "Vitalik Buterin", "Canada");
-        Stock apple = new Stock(160, "AAPL", "Apple Inc.");
+        //Stock apple = new Stock(160, "AAPL", "Apple Inc.");
 
         assets.add(bitcoin);
         assets.add(ethereum);
-        assets.add(apple);
+        //assets.add(apple);
 
         // Create Users
         User alice = new User("alice123", "password", "alice@example.com");
@@ -74,14 +84,19 @@ public class InMemoryDB implements IDatabase{
         PortfolioAsset aliceBTC = new PortfolioAsset(bitcoin, 1.0, alicePortfolio.getId());
         PortfolioAsset aliceETH = new PortfolioAsset(ethereum, 5.0, alicePortfolio.getId());
 
-        PortfolioAsset bobAAPL = new PortfolioAsset(apple, 50, bobPortfolio.getId());
+        //PortfolioAsset bobAAPL = new PortfolioAsset(apple, 50, bobPortfolio.getId());
         PortfolioAsset bobETH = new PortfolioAsset(ethereum, 2.0, bobPortfolio.getId());
 
-        alicePortfolio.addAsset(aliceBTC);
-        alicePortfolio.addAsset(aliceETH);
+        alicePortfolio.addAsset(bitcoin, 1.0);
+        alicePortfolio.addAsset(ethereum, 5.0);
 
-        bobPortfolio.addAsset(bobAAPL);
-        bobPortfolio.addAsset(bobETH);
+        //bobPortfolio.addAsset(bobAAPL);
+        bobPortfolio.addAsset(ethereum, 2.0);
+    }
+
+    @Override
+    public void addTransaction(Transaction transaction) {
+        this.transactions.add(transaction);
     }
 
 }

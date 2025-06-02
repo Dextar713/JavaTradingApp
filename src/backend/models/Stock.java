@@ -7,6 +7,11 @@ public class Stock extends Asset{
         return companyName;
     }
 
+    public Stock(double price, String name) {
+        super(price, name);
+        this.companyName = "";
+    }
+
     public Stock(double price, String name, String companyName) {
         super(price, name);
         this.companyName = companyName;

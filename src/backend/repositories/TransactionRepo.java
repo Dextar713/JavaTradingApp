@@ -27,6 +27,6 @@ public class TransactionRepo implements ITransactionRepo {
 
     @Override
     public void save(Transaction transaction) {
-        db.getTransactions().add(transaction);
+        db.addTransaction(transaction);
     }
 }

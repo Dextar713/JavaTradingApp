@@ -25,6 +25,16 @@ public class Transaction {
         return isBuy;
     }
 
+    public Transaction(int id, int userId, int assetId, double amount, double pricePerUnit, boolean isBuy) {
+        this.id = id;
+        this.userId = userId;
+        this.assetId = assetId;
+        this.amount = amount;
+        this.pricePerUnit = pricePerUnit;
+        this.status = Status.PENDING;
+        this.isBuy = isBuy;
+    }
+
     public Transaction(int userId, int assetId, double amount, double pricePerUnit, boolean isBuy) {
         this.id = counter++;
         this.userId = userId;

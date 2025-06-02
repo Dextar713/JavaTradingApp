@@ -1,9 +1,9 @@
 package backend.database;
 
 public class DBInitializer {
-    private final InMemoryDB db;
+    private final IDatabase db;
 
-    public DBInitializer(InMemoryDB db) {
+    public DBInitializer(IDatabase db) {
         this.db = db;
     }
 

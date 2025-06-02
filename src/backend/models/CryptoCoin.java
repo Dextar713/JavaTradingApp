@@ -12,6 +12,18 @@ public class CryptoCoin extends Asset {
         return creatorCountry;
     }
 
+    public CryptoCoin(int id, double price, String name) {
+        super(id, price, name);
+        this.creatorCountry = "Unknown";
+        this.creatorName = "Unknown";
+    }
+
+    public CryptoCoin(double price, String name) {
+        super(price, name);
+        this.creatorCountry = "Unknown";
+        this.creatorName = "Unknown";
+    }
+
     public CryptoCoin(double price, String name, String creatorName, String creatorCountry) {
         super(price, name);
         this.creatorCountry = creatorCountry;

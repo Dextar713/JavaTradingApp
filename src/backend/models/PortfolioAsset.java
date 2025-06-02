@@ -2,7 +2,8 @@ package backend.models;
 
 import java.util.Objects;
 
-public class PortfolioAsset extends Asset {
+public class PortfolioAsset {
+    private final Asset asset;
     private final int portfolioId;
     private double quantity;
 
@@ -18,23 +19,27 @@ public class PortfolioAsset extends Asset {
         return portfolioId;
     }
 
+    public Asset getAsset() {
+        return asset;
+    }
+
     public PortfolioAsset(Asset asset, double quantity, int portfolioId) {
-        super(asset);
+        this.asset = asset;
         this.quantity = quantity;
         this.portfolioId = portfolioId;
     }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        PortfolioAsset that = (PortfolioAsset) o;
-        return portfolioId == that.portfolioId;
+        PortfolioAsset portfolioAsset = (PortfolioAsset) o;
+        return this.portfolioId == portfolioAsset.portfolioId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), portfolioId);
+        return Objects.hash(portfolioId);
     }
 }

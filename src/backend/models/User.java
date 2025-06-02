@@ -71,6 +71,15 @@ public class User {
 
     private String email;
 
+    public User(int userId, String userName, String password, String email, Portfolio portfolio) {
+        this.id = userId;
+        this.userName = userName;
+        this.email = email;
+        this.password = new String(password);
+        this.portfolio = portfolio;
+        this.transactions = new HashSet<>();
+    }
+
     public User(String userName, String password, String email) {
         this.id = counter++;
         this.userName = userName;
