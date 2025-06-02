@@ -22,7 +22,6 @@ import java.io.StringReader;
 
 public class PriceUpdateService {
     private final String apiUrl = "https://api.api-ninjas.com/v1/cryptoprice?symbol=";
-    private final String apiKey = "n8oOTuXl0vMoX7Lzg48lHg==XT3hmxsa6FKCVdxG";
     private final IAssetRepo assetRepo;
     private long updateFrequency;
 
@@ -39,7 +38,7 @@ public class PriceUpdateService {
         this.updateFrequency = updateFrequency;
     }
 
-    private void updateSymbol(Asset asset) {
+    private void updateSymbol(Asset asset) throws ProtocolException {
         URL url = null;
         try {
             url = new URI(apiUrl+asset.getName()+"USDT").toURL();
@@ -54,7 +53,9 @@ public class PriceUpdateService {
             e.printStackTrace();
         }
         assert connection != null;
+        connection.setRequestMethod("GET");
         connection.setRequestProperty("accept", "application/json");
+        String apiKey = "n8oOTuXl0vMoX7Lzg48lHg==XT3hmxsa6FKCVdxG";
         connection.setRequestProperty("X-Api-Key", apiKey);
         InputStream responseStream = null;
         try {
@@ -95,7 +96,11 @@ public class PriceUpdateService {
             public void run() {
                 List<Asset> assets = assetRepo.getAllAssets();
                 for (Asset asset : assets) {
-                    updateSymbol(asset);
+                    try {
+                        updateSymbol(asset);
+                    } catch (ProtocolException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }, 0, 1000*updateFrequency);

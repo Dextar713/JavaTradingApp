@@ -1,6 +1,7 @@
 package backend.database;
 
 import backend.models.*;
+import backend.services.AuditService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -89,12 +90,13 @@ public class SQLiteDatabase implements IDatabase {
         try (Connection conn = DriverManager.getConnection(url)) {
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM User");
              ResultSet rs = stmt.executeQuery();
-
+            AuditService.getInstance().log("Read", "User");
             while (rs.next()) {
                 PreparedStatement stmt_portfolio = conn.prepareStatement(
                         "SELECT * FROM Portfolio where userId = ?");
                 stmt_portfolio.setInt(1, rs.getInt("id"));
                 ResultSet rs_portfolio = stmt_portfolio.executeQuery();
+                AuditService.getInstance().log("Read", "Portfolio");
                 Portfolio portfolio = new Portfolio(rs_portfolio.getInt("id"),
                         rs.getInt("id"),
                         rs_portfolio.getDouble("balance"));
@@ -120,7 +122,7 @@ public class SQLiteDatabase implements IDatabase {
         try (Connection conn = DriverManager.getConnection(url);
              PreparedStatement stmt = conn.prepareStatement("SELECT * FROM Asset");
              ResultSet rs = stmt.executeQuery()) {
-
+            AuditService.getInstance().log("Read", "Asset");
             while (rs.next()) {
                 String type = rs.getString("type");
                 Asset asset;
@@ -147,6 +149,7 @@ public class SQLiteDatabase implements IDatabase {
         try (Connection conn = DriverManager.getConnection(url)) {
             PreparedStatement stmt = conn.prepareStatement("SELECT * FROM UserTransaction");
             ResultSet rs = stmt.executeQuery();
+            AuditService.getInstance().log("Read", "UserTransaction");
             while(rs.next()) {
                 Transaction transaction = new Transaction(rs.getInt("id"),
                         rs.getInt("userId"),
@@ -176,6 +179,8 @@ public class SQLiteDatabase implements IDatabase {
             stmt.setString(6, transaction.getTime().toString());
             stmt.setBoolean(7, transaction.isBuy());
             stmt.executeUpdate();
+
+            AuditService.getInstance().log("Create", "UserTransaction");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -189,6 +194,8 @@ public class SQLiteDatabase implements IDatabase {
             stmt.setDouble(1, newPrice);
             stmt.setInt(2, assetId);
             stmt.executeUpdate();
+
+            AuditService.getInstance().log("Update", "Asset");
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

@@ -4,6 +4,7 @@ import backend.models.Asset;
 import backend.models.CryptoCoin;
 import backend.models.Portfolio;
 import backend.models.PortfolioAsset;
+import backend.services.AuditService;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -105,6 +106,7 @@ public class SQLitePortfolioRepo implements IPortfolioRepo {
             check.setInt(1, portfolioId);
             check.setInt(2, assetId);
             ResultSet rs = check.executeQuery();
+            AuditService.getInstance().log("Read", "PortfolioAsset");
 
             if (rs.next()) {
                 double existing = rs.getDouble("quantity");
@@ -114,6 +116,7 @@ public class SQLitePortfolioRepo implements IPortfolioRepo {
                 update.setInt(2, portfolioId);
                 update.setInt(3, assetId);
                 update.executeUpdate();
+                AuditService.getInstance().log("Update", "PortfolioAsset");
             } else {
                 PreparedStatement insert = conn.prepareStatement(
                         "INSERT INTO PortfolioAsset (assetId, portfolioId, quantity) VALUES (?, ?, ?)");
@@ -121,6 +124,7 @@ public class SQLitePortfolioRepo implements IPortfolioRepo {
                 insert.setInt(2, portfolioId);
                 insert.setDouble(3, quantity);
                 insert.executeUpdate();
+                AuditService.getInstance().log("Create", "PortfolioAsset");
             }
 
         } catch (SQLException e) {
@@ -137,6 +141,7 @@ public class SQLitePortfolioRepo implements IPortfolioRepo {
             update.setInt(2, portfolioId);
             update.setInt(3, assetId);
             update.executeUpdate();
+            AuditService.getInstance().log("Update", "PortfolioAsset");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -152,6 +157,7 @@ public class SQLitePortfolioRepo implements IPortfolioRepo {
 
             stmt.setInt(1, portfolioId);
             ResultSet rs = stmt.executeQuery();
+            AuditService.getInstance().log("Read", "PortfolioAsset");
 
             while (rs.next()) {
                 Asset asset = new CryptoCoin(rs.getInt("id"),

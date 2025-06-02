@@ -29,7 +29,7 @@ public class Main {
         LoginService loginService = new LoginService(userRepo);
         PriceUpdateService priceUpdateService = new PriceUpdateService(assetRepo);
         //testScenario(tradingService, assetRepo, userRepo, portfolioRepo, db);
-
+        System.out.println(transactionRepo.getAllTransactions().getLast());
         priceUpdateService.startUpdates();
         SwingUtilities.invokeLater(() -> {
             TradingAppGUI gui = new TradingAppGUI(userRepo, assetRepo, portfolioRepo,
